@@ -1,9 +1,5 @@
 
 <script>
-
-    
-
-    
     var arrayInspt=[];
         {{#each Inspetores}}   
         arrayInspt.push([
@@ -106,49 +102,82 @@
         
         $('#inspHist').click(
             function(){                   
-                var nrofogo=$('#nroFogo').val()
-                window.location = '/querys/inspecoes/'+nrofogo; 
-             
-             
-             
-             
-             
+                var nrofogo=$('#nroFogo').val()   
+              
+                $.ajax(
+                    {
+                        type: 'GET',
+                        url: '/querys/inspecoes/'+nrofogo, 
+                        dataType: 'json'
+                    }
+                ).done(    
+                    
+                    function(data){ 
+                        
+                        var post = $("#row");
+                      
+                        $.each(data, function(idx, elem){
+                           
+                            post.append(`
+                            <br>
+                           
+                                <div class="card m-1 bg-light border-0">                           
 
-                /*            
-                var arrayInsp=[]
-                {{#each Inspecoes}}   
-                    if('{{nroFogo}}'==fogo){
-                        var found = true
-                                                
-                        arrayInsp.push([                        
-                            '{{timestampStart}}',                               
-                            '{{nomeInsp}}',                               
-                            '{{nomeMot}}',                                    
-                            '{{placas}}',                                 
-                            '{{descVeic.Modelo}}',
-                            '{{quilometragem}}',
-                            '{{nroFogo}}',
-                            '{{eixo}}',
-                            '{{lado}}',
-                            '{{posicao}}',
-                            '{{sulco}}',
-                            '{{pressao}}',
-                            '{{resultado}}',
-                            '{{classificacao}}',
-                            '{{observacoes}}'                                
-                        ])
-                    } 
-                {{/each}}
-                console.log(arrayInsp)
-                          
-                if(found){ 
-                    $("#one").hide()
-                    $("#two").show()
-                }else{
-                    alert("Insira um numero de fogo")
-                } 
-                */
-                
+
+                                    <button class="btn btn-light bg-light border-0" type="button" data-toggle="collapse" data-target="#`+ elem.id +`" aria-expanded="false" aria-controls="collapseExample">
+                                        <div class="card-header bg-primary text-white" rounded>
+                                            <h6>DATA : `+ moment(elem.updatedAt).format('DD/MM/YYYY hh:mm') +`</h6>
+                                            <h6>NUM INSPEÇÃO : `+ elem.id +`</h6>  
+                                            <h6>INSPETOR : `+ elem.matriculaInspt +` - `+ elem.nomeInsp +`</h6>  
+                                            <h6>`+ elem.resultado +`</h6> 
+                                        </div>
+
+                                        <div class="card-header bg-secondary text-white" rounded> 
+                                            <h6> VER DETALHES &#9660 </h6> 
+                                        </div>
+                                    </button>                                 
+
+                                  
+                                    
+                                    <div class="collapse" id="`+ elem.id +`">
+                                        <div class="card-body">
+                                            <p class="card-text text-primary bg-light m-0 p-0">MOTORISTA
+                                                <h6 class="text-dark bg-light"> `+ elem.matriculaMot +` - `+ elem.nomeMot +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">QUILOMET
+                                                <h6 class="text-dark bg-light">`+ elem.quilometragem +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">EIXO
+                                                <h6 class="text-dark bg-light">`+ elem.eixo + `</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">LADO
+                                                <h6 class="text-dark bg-light">`+ elem.lado +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">POSIÇÃO
+                                                <h6 class="text-dark bg-light">`+ elem.posicao +`</h6></p> 
+                                            <p class="card-text text-primary bg-light m-0 p-0">SULCO
+                                                <h6 class="text-dark bg-light">`+ elem.sulco +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">PRESSÃO
+                                                <h6 class="text-dark bg-light">`+ elem.pressao +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">CLASSIF
+                                                <h6 class="text-dark bg-light">`+ elem.classificacao +`</h6></p>
+                                            <p class="card-text text-primary bg-light m-0 p-0">
+                                                <h6 class="text-danger bg-light">`+elem.observacoes+`</h6></p> 
+                                        </div>        
+                                        
+                                    </div>
+                                    
+                                </div>
+                            <br>    
+                            `);
+                        });
+                        $("#one").hide()
+                        $("#navbar").hide()
+                        $("#two").show()
+                        $('html, body').animate({scrollTop:0}, 'slow');
+
+                    }
+                ).fail(
+                    function(){
+                        alert("Insira um número de fogo válido para pesquisa")
+                    }
+                ) 
             }
         )
 
@@ -176,7 +205,7 @@
             <div id="one">
                 <br>
                 <div class="banner">
-                <h3><b> NOVA INSPEÇÃO</b></h3>
+                    <h3><b> NOVA INSPEÇÃO</b></h3>
                 </div>  
             
                 <div class="mb-3">
@@ -239,7 +268,7 @@
                 </div>
 
                     
-            <div class="mb-3">
+                <div class="mb-3">
                     <label for="nroFogo" class="form-label">Numero de fogo Pneu</label> 
                     <input type="text"  list="fogoList" id="nroFogo" name="nroFogo" class="form-control" required>
                     <datalist id = "fogoList">
@@ -343,26 +372,17 @@
                     <button type="submit" class="btn btn-success" id="submit" name="submit">Registrar inspeção ✔</button>
                 </div> 
             </div>    
-            <div id="two">  
-
-                <button type="button" class="btn btn-primary btn-block" id="closeHist" name="closeHist">Voltar a inspeção >></button>
-                <br>    
-                {{#each Inspecoes}}    
-                    <div class="card m-2">
-                        <div class="card-body" rounded>
-
-                            <p><b>DT HR :</b> {{arrayInsp.timestampStart}}   <b>INSPETOR :</b> {{nomeInsp}}</p>
-                            <p><b>MOTORISTA :</b> {{nomeMot}}   <b>PLACAS :</b> {{placas}}</p>
-                                <p><b>VEICULO :</b> {{descVeic}}</p>
-                            <p><b>KM :</b> {{quilometragem}}   <b>NFOGO :</b> {{nroFogo}}</p>   
-                            <p><b>EIXO :</b> {{eixo}} <b>LADO :</b> {{lado}} <b>POS :</b> {{posicao}} <b>SULCO :</b> {{sulco}} pressao {{pressao}}</p>
-                            <p><b>RESULT :</b> {{resultado}} <b>CLASSIF :</b> {{classificacao}} <b>OBS :</b> {{observacoes}} </p>
-                            
+            
+            <div id="two" class="bg-white"> 
+                <div class="container bg-white">
+                    <div id="row" class="row bg-white">
+                        <div class="card bg-white border-0">                           
+                            <div class="fixed-top bg-warning text-center my-2 py-2" id="closeHist"> << Voltar para inspeção</div>
                         </div>
-                    </div>
-                {{/each}}              
-                
-            </div>
+                        
+                    </div>    
+                </div>
+            </div>    
         </form>
     </div> 
 </div>    

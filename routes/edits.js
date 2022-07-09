@@ -5,10 +5,11 @@ const Inspetores = require('../models/inspetores')
 const Motoristas = require('../models/motoristas')
 const Pneus = require('../models/pneus')
 const Veiculos = require('../models/veiculos')
+const {isAuth}= require('../helpers/isAuth')
 
 
 
-router.get('/veiculos/:id', function(req,res){
+router.get('/veiculos/:id', isAuth,(req,res)=>{
     
     Veiculos.findByPk(req.params.id).then(function(Veiculo){
         res.render('edits/veiculos',{Veiculo:Veiculo})
@@ -29,7 +30,7 @@ router.get('/pneus/:id',
     }
 )  
 
-router.get('/motoristas/:id', function(req,res){
+router.get('/motoristas/:id', isAuth,(req,res)=>{
     
     Motoristas.findByPk(req.params.id).then(function(Motorista){
         res.render('edits/motoristas',{Motorista:Motorista})

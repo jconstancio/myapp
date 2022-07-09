@@ -3,9 +3,9 @@ const router = express.Router()
 const Inspecoes = require('../models/inspecoes')
 
 router.get('/inspecoes/:nrofogo',(req,res)=>{
-    Inspecoes.findAll({where: {'nrofogo' : req.params.nrofogo}}).then(
+    Inspecoes.findAll({where: {'nrofogo' : req.params.nrofogo},order: [['id','DESC']]}).then(
         function(Inspecoes){
-            res.redirect({Inspecoes:Inspecoes})  
+            res.send(Inspecoes)  
         }
     )  
 })         

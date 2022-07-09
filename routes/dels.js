@@ -5,8 +5,9 @@ const Emparelhamentos = require('../models/emparelhamentos')
 const Motoristas = require('../models/motoristas')
 const Pneus = require('../models/pneus')
 const Veiculos = require('../models/veiculos')
+const {isAuth}= require('../helpers/isAuth')
 
-router.get('/veiculos/:id', function(req,res){
+router.get('/veiculos/:id', isAuth,(req,res)=>{
     
     Veiculos.destroy({where: {'id' : req.params.id}
     }).then(function(){
@@ -18,7 +19,7 @@ router.get('/veiculos/:id', function(req,res){
     })
 })
 
-router.get('/pneus/:id', function(req,res){
+router.get('/pneus/:id', isAuth,(req,res)=>{
     
     Pneus.destroy({where: {'id' : req.params.id}
     }).then(function(){
@@ -30,7 +31,7 @@ router.get('/pneus/:id', function(req,res){
     })
 })
 
-router.get('/motoristas/:id', function(req,res){
+router.get('/motoristas/:id', isAuth,(req,res)=>{
     
     Motoristas.destroy({where: {'id' : req.params.id}
     }).then(function(){
@@ -43,7 +44,7 @@ router.get('/motoristas/:id', function(req,res){
 })
 
 
-router.get('/emparelhamentos/:id', function(req,res){
+router.get('/emparelhamentos/:id', isAuth,(req,res)=>{
     
     Emparelhamentos.destroy({where: {'id' : req.params.id}
     }).then(function(){

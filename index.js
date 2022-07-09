@@ -1,93 +1,70 @@
   //MODULOS
   const express = require('express')
-  const app = express()  
-  const PORT = process.env.PORT || 5000
-  
-  //TRABALHAR COM HTML
   const handlebars = require('express-handlebars')
-  
-  //TRABALHAR COM HTML-DATABASE
-  const bodyParser = require('body-parser')  
-  
-  //TRABALHAR COM ROTAS  
+  const bodyParser = require('body-parser')
+  const app = express()  
   const admin = require('./routes/admin')
+  const path = require('path')
+  const session = require('express-session')
+  const flash = require('connect-flash')
+  const passport = require('passport')
+  //const env = require('dotenv').load();
+  
+  require('./config/auth')(passport)   
+  const {isAuth}= require('./helpers/isAuth')   
+  
   const cadastros = require('./routes/cadastros')
   const listagens = require('./routes/listagens') 
-  const menus = require('./routes/menus')
   const posts = require('./routes/posts')
   const updates = require('./routes/updates')
   const dels = require('./routes/dels')
   const edits = require('./routes/edits')
   const querys = require('./routes/querys')
+  const usuarios = require('./routes/usuarios')  
+ 
+ 
+  app.use(session({
+  secret: 'android',
+  resave: true,
+  saveUninitialized:true  
+  })) 
+  app.use(passport.initialize())
+  app.use(passport.session())    
+  app.use(flash()) 
+     
+  app.use((req,res,next)=>{
+    res.locals.success_msg = req.flash('success_msg')
+    res.locals.error_msg = req.flash('error_msg')
+    res.locals.error = req.flash('error')
+    res.locals.user = req.user || null
+    next()
+  })
 
-   //TRABALHAR COM DIALOG
-  const dialog = require('dialog-node');
+  app.use(bodyParser.urlencoded({extended: true}))
+  app.use(bodyParser.json())
 
-
-
-
-  //TRABALHAR COM DIRETORIOS
-  const path = require('path')
+  app.engine('handlebars', handlebars.engine({defaultLayout: 'main',
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true
+    }
+  }))    
+  app.set('view engine','handlebars')  
+  app.use(express.static(path.join(__dirname,'public')))
   
-
-  //TRABALHAR COM SESSOES
-  const session = require('cookie-session')
+  app.use('/admin',admin) 
+  app.use('/usuarios',usuarios) 
+  app.use('/cadastros',cadastros) 
+  app.use('/listagens',listagens) 
+  app.use('/posts',posts)
+  app.use('/updates',updates)       
+  app.use('/dels',dels) 
+  app.use('/edits',edits) 
+  app.use('/querys',querys) 
   
-  //TRABALHAR COM COOOKIES
-  const flash = require('connect-flash')
-  
-  //CONFIGURACOES    
-  
-    //SESSÃO
-    app.use(session({
-    secret: 'pneuinspector',
-    resave: true,
-    saveUninitialized: true
-    })) 
-    app.use(flash())      
-    
-    //MIDDLEWARE
-    
-    app.use(function(req,res,next){
-      res.locals.success_msg = req.flash('success_msg')
-      res.locals.error_msg = req.flash('error_msg')
-      next()
-    })
-    
-    //TEMPLATE ENGINE HANDLEBARS
-      app.engine('handlebars', handlebars.engine({defaultLayout: 'main',
-        runtimeOptions: {
-          allowProtoPropertiesByDefault: true,
-          allowProtoMethodsByDefault: true,
-        },
-      }))   
-      app.set('view engine','handlebars')
-    
-      //PUBLIC
-      app.use(express.static(path.join(__dirname,'public')))
-      
-      //BODY-PARSER  
-      app.use(bodyParser.urlencoded({extended: false}))
-      app.use(bodyParser.json())
-      
-    
-      //ROUTER 
-      app.use('/admin',admin) 
-      app.use('/cadastros',cadastros) 
-      app.use('/listagens',listagens) 
-      app.use('/menus',menus) 
-      app.use('/posts',posts)
-      app.use('/updates',updates)       
-      app.use('/dels',dels) 
-      app.use('/edits',edits) 
-      app.use('/querys',querys) 
-      
-      //ROUTER MENU
-      app.get('/',(req,res)=>{
-      res.render('menus/logo')
-    })   
-  //
-  
+  app.get('/',(req,res)=>{
+    res.render('usuarios/login')
+  })   
   
   app.listen(8081)
   //app.listen(process.env.PORT || 5000)
