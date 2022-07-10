@@ -1,4 +1,4 @@
-  //MODULOS
+
   const express = require('express')
   const handlebars = require('express-handlebars')
   const bodyParser = require('body-parser')
@@ -24,7 +24,7 @@
  
  
   app.use(session({
-  secret: 'android',
+  secret: '',
   resave: true,
   saveUninitialized:true  
   })) 
